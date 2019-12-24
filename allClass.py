@@ -5,6 +5,7 @@ import sys
 import time
 import random
 
+
 import os
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (10,20)
@@ -41,6 +42,84 @@ class pac:
 			return (self.x, self.y)
 		else:
 			return (self.x + dx, self.y + dy)
+
+class ghostBFS:
+	def __init__(self, _x, _y, imgPrefix = "ghost1_"):
+		self.x = _x
+		self.y = _y
+		self.img = []
+		for i in range(4):
+			self.img.append( imgPrefix + str(i) + ".png")
+		self.d = 0
+	def backMove(self, g):
+		dx, dy = 0,0
+		if(self.d == 0):
+			dx,dy = (1,0)
+		elif(self.d == 1):
+			dx,dy = (0,-1)
+		elif(self.d == 2):
+			dx,dy = (-1,0)
+		elif(self.d == 3):
+			dx,dy = (0,1)
+		dx,dy = -dx,-dy
+		if(g.map[self.x + dx][self.y + dy] == 1):
+			return (self.x, self.y)
+		else:
+			return (self.x + dx, self.y + dy)
+
+	def move(self, dx, dy, m, dd):
+		self.d = dd
+		if( m[self.x + dx][self.y + dy] == 1):
+			return
+		self.x += dx
+		self.y += dy
+	def getMove(self, g):
+		dizzyRate = 30
+		r = random.randint(1,100)
+		if(r<=dizzyRate):
+			return random.randint(0,3)
+		q = []
+		qPtr = 0
+		dis = []
+		for i in range( len(g.map) ):
+			dis.append([])
+			for j in range(len(g.map[0])):
+				dis[i].append(10000)
+		dis[g.pac.x][g.pac.y] = 0
+		q.append((g.pac.x, g.pac.y))
+		while(qPtr < len(q)):
+			nowX,nowY = q[qPtr]
+			qPtr += 1
+			for i in range(4):
+				dx, dy = 0,0
+				if(i == 0):
+					dx,dy = (1,0)
+				elif(i == 1):
+					dx,dy = (0,-1)
+				elif(i == 2):
+					dx,dy = (-1,0)
+				elif(i == 3):
+					dx,dy = (0,1)
+				if( g.map[nowX+dx][nowY+dy] != 1 and dis[nowX + dx][nowY + dy] > dis[nowX][nowY]+1 ):
+					dis[nowX+dx][nowY + dy] = dis[nowX][nowY] + 1
+					q.append( (nowX+dx,nowY+dy))
+
+		print("min ",dis[self.x][self.y])
+		for i in range(4):
+			dx, dy = 0,0
+			if(i == 0):
+				dx,dy = (1,0)
+			elif(i == 1):
+				dx,dy = (0,-1)
+			elif(i == 2):
+				dx,dy = (-1,0)
+			elif(i == 3):
+				dx,dy = (0,1)
+			print("cc",i,dis[self.x + dx][self.y + dy])
+			if( dis[self.x + dx][self.y + dy] + 1 == dis[self.x][self.y]):
+				return i
+
+
 class ghostRandom:
 	def __init__(self, _x, _y, imgPrefix = "ghost1_"):
 		self.x = _x
@@ -77,7 +156,7 @@ class ghostRandom:
 		disY = g.pac.y - self.y
 
 		prob = [50,30,15,5]
-		prob = [25,25,25,25]
+		# prob = [25,25,25,25]
 		arr = []
 		if( abs(disY) > abs(disX) ):
 			if(disY > 0):
@@ -176,10 +255,13 @@ class game:
 				if(self.map[i][j] == 2):
 					self.clearPoints += 1
 
-		print(self.clearPoints)
 		self.startX, self.startY = 17,14;
-		self.ghostStartX = [15,15]
+		self.ghostStartX = [15,15] #two ghosts
 		self.ghostStartY = [11,16]
+
+		# self.ghostStartX = [15] #one ghost
+		# self.ghostStartY = [11]
+
 
 		self.fps = 10
 		self.fpsClock = pygame.time.Clock()
@@ -207,7 +289,7 @@ class game:
 		self.pac = pac(self.startX, self.startY)
 		self.ghosts = []
 		for i in range(len(self.ghostStartX)):
-			self.ghosts.append(ghostRandom(self.ghostStartX[i], self.ghostStartY[i]))
+			self.ghosts.append(ghostBFS(self.ghostStartX[i], self.ghostStartY[i]))
 
 
 	def timeGrid(self, x,y):
