@@ -104,7 +104,6 @@ class ghostBFS:
 					dis[nowX+dx][nowY + dy] = dis[nowX][nowY] + 1
 					q.append( (nowX+dx,nowY+dy))
 
-		print("min ",dis[self.x][self.y])
 		for i in range(4):
 			dx, dy = 0,0
 			if(i == 0):
@@ -115,7 +114,6 @@ class ghostBFS:
 				dx,dy = (-1,0)
 			elif(i == 3):
 				dx,dy = (0,1)
-			print("cc",i,dis[self.x + dx][self.y + dy])
 			if( dis[self.x + dx][self.y + dy] + 1 == dis[self.x][self.y]):
 				return i
 

@@ -15,7 +15,7 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (10,20)
 
 def main():
 
-	
+	gameId = 1
 	while(True): 
 		g = game()
 
@@ -48,11 +48,13 @@ def main():
 
 			state = g.drawAll()
 			if( state == 0 ):
+				pygame.image.save(g.screen,"images/" + str(gameId) + ".jpg")
 				print("End! Scores = " + str(g.points) + ", Time = " + str(g.frameCnt//10) + "." + str(g.frameCnt%10))
 				break
 			elif(state == 2):
+				pygame.image.save(g.screen,"images/" + str(gameId) + ".jpg")
 				print("Win! Scores = " + str(g.points) + ", Time = " + str(g.frameCnt//10) + "." + str(g.frameCnt%10))
 				break
-
+		gameId+=1
 		time.sleep(4)
 main()
