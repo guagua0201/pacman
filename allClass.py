@@ -72,10 +72,12 @@ class ghostRandom:
 		self.x += dx
 		self.y += dy
 	def getMove(self, g):
+
 		disX = g.pac.x - self.x
 		disY = g.pac.y - self.y
 
 		prob = [50,30,15,5]
+		prob = [25,25,25,25]
 		arr = []
 		if( abs(disY) > abs(disX) ):
 			if(disY > 0):
@@ -168,6 +170,13 @@ class game:
 ,[1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1]
 ,[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 
+		self.clearPoints = 0
+		for i in range( len(self.map) ):
+			for j in range( len(self.map[0]) ):
+				if(self.map[i][j] == 2):
+					self.clearPoints += 1
+
+		print(self.clearPoints)
 		self.startX, self.startY = 17,14;
 		self.ghostStartX = [15,15]
 		self.ghostStartY = [11,16]
@@ -176,7 +185,7 @@ class game:
 		self.fpsClock = pygame.time.Clock()
 
 		self.gridSize = (30,30)
-		self.screenSize = ( (len(self.map) * self.gridSize[0]), (len(self.map[0]) * self.gridSize[1]) )
+		self.screenSize = ( (len(self.map) * self.gridSize[0]) + 300, (len(self.map[0]) * self.gridSize[1]) )
 
 
 		self.screen = pygame.display.set_mode( self.screenSize, 0, 32)
@@ -257,8 +266,23 @@ class game:
 		if(self.checkGhost()):
 			return 0
 
-		self.screen.blit(self.surf, (0,0))
+		if(self.points == self.clearPoints):
+			return 2
 
+		font = pygame.font.Font(None, 50)
+		text1= font.render( str(self.points), 10, (255,255,255))
+		text2 = font.render( str(self.frameCnt//10) + "." + str(self.frameCnt%10), 10, (255,255,255))		
+
+		textpos1 = text1.get_rect()
+		textpos2 = text2.get_rect()
+		textpos1.centerx = (len(self.map) * self.gridSize[0]) + 100
+		textpos1.centery = 200
+		textpos2.centerx = (len(self.map) * self.gridSize[0]) + 100
+		textpos2.centery = 500
+		self.surf.blit(text1, textpos1)
+		self.surf.blit(text2, textpos2)
+
+		self.screen.blit(self.surf, (0,0))
 
 		pygame.display.flip()
 		pygame.display.update()

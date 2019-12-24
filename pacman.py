@@ -46,10 +46,13 @@ def main():
 			elif(nowMove == 3):
 				ghost.move(0,1,g.map,3)			
 
-		if( g.drawAll() == 0 ):
+		state = g.drawAll()
+		if( state == 0 ):
 			print("End! Scores = " + str(g.points) + ", Time = " + str(g.frameCnt//10) + "." + str(g.frameCnt%10))
 			break
-		
+		elif(state == 2):
+			print("Win! Scores = " + str(g.points) + ", Time = " + str(g.frameCnt//10) + "." + str(g.frameCnt%10))
+			break
 
 
 main()
