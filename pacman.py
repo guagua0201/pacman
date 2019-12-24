@@ -24,9 +24,31 @@ def main():
 
 	while(True):
 		nowMove = ms.getMove(g)
+		if(nowMove == -1):
+			nowMove = g.pac.d
+		if(nowMove == 0):
+			g.pac.move(1,0,g.map,0)
+		elif(nowMove == 1):
+			g.pac.move(0,-1,g.map,1)
+		elif(nowMove == 2):
+			g.pac.move(-1,0,g.map,2)
+		elif(nowMove == 3):
+			g.pac.move(0,1,g.map,3)
 
-		g.drawAll()
+		for ghost in g.ghosts:
+			nowMove = ghost.getMove(g)
+			if(nowMove == 0):
+				ghost.move(1,0,g.map,0)
+			elif(nowMove == 1):
+				ghost.move(0,-1,g.map,1)
+			elif(nowMove == 2):
+				ghost.move(-1,0,g.map,2)
+			elif(nowMove == 3):
+				ghost.move(0,1,g.map,3)			
 
+		if( g.drawAll() == 0 ):
+			print("End! Scores = " + str(g.points) + ", Time = " + str(g.frameCnt//10) + "." + str(g.frameCnt%10))
+			break
 		
 
 
